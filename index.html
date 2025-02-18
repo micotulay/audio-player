@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audio & Video Player</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="player-container">
+        <div class="media-player">
+            <video id="videoPlayer" src="video.mp4"></video>
+            <div class="controls">
+                <button id="playVideo" class="btn">▶</button>
+                <input type="range" id="videoProgress" value="0">
+                <span id="videoTime">0:00</span>
+                <input type="range" id="videoVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+
+        <div class="media-player">
+            <audio id="audioPlayer" src="audio.mp3"></audio>
+            <div class="controls">
+                <button id="playAudio" class="btn">▶</button>
+                <input type="range" id="audioProgress" value="0">
+                <span id="audioTime">0:00</span>
+                <input type="range" id="audioVolume" min="0" max="1" step="0.1" value="1">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function formatTime(seconds) {
+            const min = Math.floor(seconds / 60);
+            const sec = Math.floor(seconds % 60);
+            return `${min}:${sec < 10 ? "0" : ""}${sec}`;
+        }
+
+        function setupMediaControls(media, playButton, progressBar, timeDisplay, volumeControl) {
+            playButton.addEventListener("click", () => {
+                if (media.paused) {
+                    media.play();
+                    playButton.textContent = "❚❚";
+                } else {
+                    media.pause();
+                    playButton.textContent = "▶";
+                }
+            });
+
+            media.addEventListener("timeupdate", () => {
+                progressBar.value = (media.currentTime / media.duration) * 100;
+                timeDisplay.textContent = formatTime(media.currentTime);
+            });
+
+            progressBar.addEventListener("input", () => {
+                media.currentTime = (progressBar.value / 100) * media.duration;
+            });
+
+            volumeControl.addEventListener("input", () => {
+                media.volume = volumeControl.value;
+            });
+        }
+
+        setupMediaControls(
+            document.getElementById("videoPlayer"),
+            document.getElementById("playVideo"),
+            document.getElementById("videoProgress"),
+            document.getElementById("videoTime"),
+            document.getElementById("videoVolume")
+        );
+
+        setupMediaControls(
+            document.getElementById("audioPlayer"),
+            document.getElementById("playAudio"),
+            document.getElementById("audioProgress"),
+            document.getElementById("audioTime"),
+            document.getElementById("audioVolume")
+        );
+    </script>
+</body>
+</html>
